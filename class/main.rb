@@ -1,5 +1,6 @@
 require_relative 'cashier'
 require_relative 'layout'
+require_relative 'file_dealer'
 
 class Main
 
@@ -27,5 +28,7 @@ class Main
     end
     opt = Layout.menu 
   end
+
+  FileDealer.save(cashier.transactions)
 
 end
