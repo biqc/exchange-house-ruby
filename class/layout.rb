@@ -18,12 +18,7 @@ class Layout
     opt
   end
 
-  def self.createTable(transactions)
-    rows = []
-    transactions.each do |t|
-      rows << [t.id, t.tran_type, t.currency, t.dolar_price, t.total.round(2)]
-    end
-
+  def self.createTable(rows)
     table = Terminal::Table.new :headings => ['ID', 'TIPO_TRANS', 'MOEDA', 'COT_DOLAR', 'TOTAL($)'], :rows => rows
     puts table
     Layout.enter_continue
@@ -52,8 +47,8 @@ class Layout
 
   def self.show_situation(cashier)
     row = []
-    row << [cashier.real.round(2), cashier.dolar.round(2), cashier.dolar_price]
-    table = Terminal::Table.new :headings => ['TOTAL_REAL', 'TOTAL_DOLAR', 'COTAÇÂO'], :rows => row
+    row << [cashier.real.round(2), cashier.dolar.round(2), cashier.dolar_price, cashier.operador]
+    table = Terminal::Table.new :headings => ['TOTAL_REAL', 'TOTAL_DOLAR', 'COTAÇÂO', 'OPERADOR'], :rows => row
     puts table
     self.enter_continue
   end

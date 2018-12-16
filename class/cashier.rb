@@ -1,24 +1,16 @@
 require_relative 'transaction'
 require_relative 'layout'
+require_relative 'database'
 
 class Cashier 
-    attr_accessor :dolar, :real, :dolar_price, :transactions
+    attr_accessor :id, :dolar, :real, :dolar_price, :operador
 
-    def initialize(dolar_price, dolar, real, transactions = [])
+    def initialize(id, dolar_price, dolar, real, operador)
+      @id = id
       @dolar_price = dolar_price
       @dolar = dolar
       @real = real
-      @transactions = transactions
-    end
-
-    def self.start_day
-      puts 'Digite a cotação do dólar atual:'
-      cot = gets.to_f
-      puts 'Digite a quantidade de dólares disponíveis:'
-      dol = gets.to_f  
-      puts 'Digite a quantidade de reais disponíveis:'
-      rea = gets.to_f 
-      return Cashier.new(cot, dol, rea)
+      @operador = operador
     end
 
     def buyDolar
@@ -29,7 +21,7 @@ class Cashier
         puts "Confime a operação:"
         puts "Compra de $ #{dolares.round(2)} (S/N)"
         if gets.chomp.upcase.eql? "S" 
-          @transactions << Transaction.real_to_dolar(self, dolares, "COMPRA")
+          Transaction.real_to_dolar(self, dolares, "COMPRA")
           Layout.op_suc
         else
           Layout.op_canc
@@ -48,7 +40,7 @@ class Cashier
         puts "Confime a operação:"
         puts "Compra de R$ #{reais.round(2)} (S/N)"
         if gets.chomp.upcase.eql? "S" 
-          @transactions << Transaction.dolar_to_real(self, reais, "COMPRA")
+          Transaction.dolar_to_real(self, reais, "COMPRA")
           Layout.op_suc
         else
           Layout.op_canc
@@ -66,7 +58,7 @@ class Cashier
           puts "Confime a operação:"
           puts "Venda de $ #{dolares.round(2)} (S/N)"
           if gets.chomp.upcase.eql? "S" 
-            @transactions << Transaction.dolar_to_real(self, dolares, "VENDA")
+            Transaction.dolar_to_real(self, dolares, "VENDA")
             Layout.op_suc
           else
             Layout.op_canc
@@ -84,7 +76,7 @@ class Cashier
           puts "Confime a operação:"
           puts "Venda de $ #{reais.round(2)} (S/N)"
           if gets.chomp.upcase.eql? "S" 
-            @transactions << Transaction.real_to_dolar(self, reais, "VENDA")
+            Transaction.real_to_dolar(self, reais, "VENDA")
             Layout.op_suc
           else
             Layout.op_canc
@@ -95,7 +87,9 @@ class Cashier
     end
 
     def show_daily_op
-      Layout.createTable(@transactions)
+      transactions = []
+      transactions = Database.get_transactions(@id)
+      Layout.createTable(transactions)
     end
 
     def show_cashier_status

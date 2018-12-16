@@ -1,12 +1,13 @@
 require_relative 'cashier'
 require_relative 'layout'
 require_relative 'file_dealer'
+require_relative 'database'
 
 class Main
 
-  cashier = Cashier.start_day
-  system "cls"
-  
+  db = Database.new
+  cashier = db.start_cashier
+ 
   opt = Layout.menu
     
   while opt != 7 do
@@ -28,7 +29,5 @@ class Main
     end
     opt = Layout.menu 
   end
-
-  FileDealer.save(cashier.transactions)
 
 end

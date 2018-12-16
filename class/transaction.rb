@@ -1,11 +1,11 @@
 require_relative 'cashier'
+require_relative 'database'
 
 class Transaction
 
   attr_reader :id, :tran_type, :currency, :dolar_price, :total
 
-  def initialize(id, tran_type, currency, dolar_price, total)
-    @id = id
+  def initialize(tran_type, currency, dolar_price, total)
     @tran_type = tran_type
     @currency = currency
     @dolar_price = dolar_price
@@ -16,13 +16,12 @@ class Transaction
     cashier.real = cashier.real + dolares * cashier.dolar_price
     cashier.dolar = cashier.dolar - dolares
 
-    id = cashier.transactions.size == 0 ? 1 : cashier.transactions.last.id + 1
-
     if type.eql? "COMPRA"
-      return Transaction.new(id, type, "DOLAR", cashier.dolar_price, dolares)
+      Database.insert_transaction(cashier.id , Transaction.new(type, "DOLAR", cashier.dolar_price, dolares))
     else
-      return Transaction.new(id, type, "REAL", cashier.dolar_price, dolares / cashier.dolar_price)
+      Database.insert_transaction(cashier.id , Transaction.new(type, "REAL", cashier.dolar_price, dolares / cashier.dolar_price))
     end
+    Database.update_cashier(cashier.id, cashier.dolar_price, cashier.dolar, cashier.real, cashier.operador)
   end
 
   def self.dolar_to_real(cashier, reais, type)
@@ -31,13 +30,12 @@ class Transaction
     cashier.dolar = cashier.dolar + value_in_dolar
     cashier.real = cashier.real - reais
 
-    id = cashier.transactions.size == 0 ? 1 : cashier.transactions.last.id + 1
-
     if type.eql? "COMPRA"
-      return Transaction.new(id, type, "REAL", cashier.dolar_price, value_in_dolar)
+      Database.insert_transaction(cashier.id , Transaction.new(type, "REAL", cashier.dolar_price, value_in_dolar))
     else
-      return Transaction.new(id, type, "DOLAR", cashier.dolar_price, reais)
+      Database.insert_transaction(cashier.id , Transaction.new(type, "DOLAR", cashier.dolar_price, reais))
     end
+    Database.update_cashier(cashier.id, cashier.dolar_price, cashier.dolar, cashier.real, cashier.operador)
   end
 
 
